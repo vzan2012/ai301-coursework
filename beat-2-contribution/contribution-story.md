@@ -55,10 +55,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 5: search queries from my fit profile, and a fix after the scout missed people who had already applied**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I wrote seven search queries from my fit profile, added filters to drop assigned, stale and repeat-repo issues, and let the scout grade the top five out of about 700 results. It missed something: two of the issues it passed already had strangers commenting that they'd applied to work on them through the Stellar Wave Program, because my `unclaimed` check only looked at assignees and open PRs. I changed it to fail an issue when a non-maintainer has said they're working on it or applied in the last 60 days, and I kept the 60-day limit so an old claim doesn't count, like the stale one in my Unit 1 eval. I haven't re-run the scan or that eval since, so I can't say yet that the fix is clean.
 
 **Unit 6: [one line on the tool work]**
 
