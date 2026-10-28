@@ -1,4 +1,4 @@
-# Contribution: [Issue Title]
+# Contribution: UI : Use the beautiful style of the close popup icon for the play/pause button
 
 Path: `beat-2-contribution/contribution-story.md`
 
@@ -8,10 +8,9 @@ format criteria grade exactly that. Your course repo link is the whole submissio
 files and no evidence uploads are part of Assignment 5.
 
 **Contribution Number:** [1]
-**Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
-**Issue:** [GitHub issue link]
+**Student:** Deepak Guptha
+**GitHub Username:** vzan2012
+**Issue:** https://github.com/Babali42/DrumBeatRepo/issues/591
 **Pull Request:** [GitHub PR link, once opened]
 
 One repository, built across units 5 to 8, telling the whole story of your real
@@ -59,11 +58,9 @@ one in the week it belongs to.
 
 I wrote seven search queries from my fit profile, added filters to drop assigned, stale and repeat-repo issues, and let the scout grade the top five out of about 700 results. It missed something: two of the issues it passed already had strangers commenting that they'd applied to work on them through the Stellar Wave Program, because my `unclaimed` check only looked at assignees and open PRs. I changed it to fail an issue when a non-maintainer has said they're working on it or applied in the last 60 days, and I kept the 60-day limit so an old claim doesn't count, like the stale one in my Unit 1 eval. I haven't re-run the scan or that eval since, so I can't say yet that the fix is clean.
 
-**Unit 6: [one line on the tool work]**
+**Unit 6: installed the voice-guard and posted my claim through it; repo memory still to do**
 
-[2-4 sentences: the voice-guard, the repo-memory file. What broke or
-fell short, and what changed because of it. "Nothing broke" counts when
-it is true - say how you know.]
+I installed the voice-guard hook and added upstream rules to my voice guide (claims, questions, pings). The hook stopped my test command, as it should, and my claim draft passed the check before I posted it. On Windows, `ln -s` only makes a copy, so I used one-line pointer files so all my skills read the same guide, and I swapped `python3` for `python` in the hook because `python3` isn't available here. The first time I posted, the guard stopped me because it looked for my draft in the wrong folder; I used the full path and the post went through. I haven't written the repo memory file yet.
 
 **Unit 7: [one line on the tool work]**
 
@@ -79,24 +76,20 @@ drafted, what you did with the draft.]
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs in your own words: how you searched, what your scan
-surfaced, what your scout's verdict said, why this issue fits your
-profile, and what you hope to learn. If your scout's verdict on it
-was reject and you chose it anyway, say so here and say why; choosing
-against your own tool silently is what loses points. Close with an
-honest read of the tool itself: where the scout fell short on a real
-wild search and what you changed or would change, or what convinced
-you it held up. **Record the link to your claim comment in this section too.**
-Not claimed yet? Write `claim pending` and today's date where the link goes,
-and add the link the moment your claim lands.]
+I searched with seven queries written from my fit profile (JavaScript/TypeScript, NestJS, React, Node, tests, and a Python fallback). The scan on Oct 15 returned about 700 results, and after dropping assigned and stale issues and keeping one issue per repo, my scout graded the top five. Four were accepted and one rejected, but none of them is the issue I picked. The AI301 Issue Selection site is where my real pick came from, so I used the scan as practice and looked through the site's list myself. I checked each candidate on GitHub for assignees, comments and pull requests that mention it. Most popular good-first-issues already had competing PRs, and the one that held up was a quiet small repo with no comments.
+
+That issue is DrumBeatRepo #591: make the play/pause button reuse the close popup button's style. I graded it directly with my scout and it came back accept, 5 of 5 checks passing. Two of the quotes: `maintainer-alive`: "Owner Babali42 pushed a non-bot commit to main on 2026-10-16 (1 day ago)", and `unclaimed`: "0 assignees, 0 linked or open PRs mentioning #591, 0 comments (no claim or program application)". It fits my profile as a small, well-scoped task with written acceptance criteria, and the existing tests have to keep passing. It is only a partial fit on the stack, because the frontend is Angular and not React or NestJS. I hope to learn how to read an unfamiliar Angular codebase and run its test suite.
+
+I did not disagree with my scout on this one. It fell short earlier: it passed two issues that already had strangers saying they had applied through a program, because my `unclaimed` check only counted assignees and open PRs. I changed it to also look at claim comments from the last 60 days. I have not re-run the scan or my Unit 1 eval since that fix, so I can't say yet that it holds.
+
+Claim comment: https://github.com/Babali42/DrumBeatRepo/issues/591#issuecomment-6461382811 (posted Oct 28)
 
 **Toolkit**
 
-- Tool: issue-scout (your scout: your search strategy, your rubric),
-  and how you used it
-- What it produced: [the scan and its verdict on this issue, described]
-- Difficulties: [where it fell short, or "none met" if none did]
-- What changed: [what you patched or would update, or "nothing"]
+- Tool: issue-scout, with my own search strategy and rubric. I ran one scan from my queries, then used it in direct mode to grade the issue I found on the Issue Selection site.
+- What it produced: a scan that narrowed about 700 results to five graded issues, and a direct grade of #591: accept, 5 of 5 checks passing.
+- Difficulties: the `unclaimed` check missed strangers who had applied through a program. Also, the site's list was a snapshot, and many issues in it were already fixed or had competing PRs, which the scout's free ranking fields can't see.
+- What changed: I widened `unclaimed` to count claim comments from the last 60 days. I did not change the search, and I have not re-run the scan since.
 
 ---
 
