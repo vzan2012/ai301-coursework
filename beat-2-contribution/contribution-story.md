@@ -99,26 +99,32 @@ The owner replied about an hour after my claim: "Then you're welcome ! I'm looki
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+The play/pause button doesn't look like the close button on the popups. The maintainer says the close button has been polished by many contributors, and he wants the play/pause button to reuse that same style so the app looks consistent. Nothing is broken. It's a visual change.
 
 **Expected Behavior**
 
-[What should happen?]
+The play/pause button uses the same visual style as the close popup button. Its icon still switches between play and pause with the playback state, the button still works, and it stays responsive on desktop and mobile. The existing tests still pass.
 
 **Current Behavior**
 
-[What actually happens?]
+On desktop the play button is 64x64, white, with a thin dark border and 8px corners, the same as the close button. When I hover it, it fills dark but the icon stays black. The close button is 36x36 with a light gray tint, a soft border and 8px corners. Below 1280px the desktop button disappears and a separate round floating button takes over, with its own style. The icon already follows the playback state on both.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+All under `frontend/src`:
+
+- `app/ui/components/sequencer/sequencer.component.html`: the two play buttons (desktop and `.mobile-play-button`).
+- `app/ui/components/sequencer/sequencer.component.scss`: the styles for both.
+- `styles/modals/modal.base.scss`: `.close-btn`, the style to reuse.
+- `styles/utils.scss`: the shared `.app-button` class the play button uses now.
+- `app/ui/components/sequencer/sequencer.component.spec.ts`: the tests. None of them mention the play button.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code with the repo memory file I wrote in Unit 6, plus what I wrote down in my reproduction.
+- What it produced: the four answers above, put together from my repro notes and the files we read, not from guessing.
+- Difficulties: I had to keep apart what I saw in the browser (the look and the hover) and what I only read in the CSS (the sizes and radii).
+- What changed: nothing in my tools. I kept the CSS numbers marked as read from the code, as the repro-check feedback suggested.
 
 ---
 
@@ -131,7 +137,7 @@ Windows 10, Edge, repo at commit 9ea0e66 (the tip of main). The app needs `front
 **Steps to Reproduce**
 
 1. Open http://localhost:4200. The Hip-Hop beat is loaded.
-2. Look at the play button: 64x64, white, thin border, large corners. Hover it: it fills dark and the black icon stays black.
+2. Look at the play button: 64x64, white, thin border, 8px corners (the same as the close button). Hover it: it fills dark and the black icon stays black.
 3. Click it. The icon changes to pause.
 4. Click "Export to .wav" and look at the × close button: 36x36, light gray, soft border, 8px corners.
 5. Narrow the window below 1280px. The desktop play button disappears and a separate round floating button takes over, with the same play/pause icons.
@@ -156,29 +162,59 @@ Windows 10, Edge, repo at commit 9ea0e66 (the tip of main). The app needs `front
 
 **Analysis**
 
-[Your analysis of the root cause: what is causing the issue, traced
-to the files and functions involved.]
+The play/pause button and the close button are styled in two separate places, so they drifted apart. The play button's style is in `sequencer.component.scss`: a solid page-colored background, a full-strength border, a hover that turns the whole button dark, a press that shrinks it to 90%, and no custom focus ring (the browser's default black ring shows when you tab to it). The close button's style is `.close-btn` in `styles/modals/modal.base.scss`: a faint tint, a soft border, a gentle hover, a press that shrinks it to 96%, and a blue focus ring. Each of the three modals (export audio, export MIDI, browse audio samples) loads that file through its own `styleUrl`. No component in `frontend/src` sets `encapsulation`, so they all use Angular's default (emulated) style scoping, which keeps a component's styles inside that component. So the sequencer can't use the class `close-btn`, and nothing is shared. Below 1280px a second button, `.mobile-play-button`, takes over, and it has its own style too.
 
 **Proposed Solution**
 
-[High-level description of your fix approach, and what you are
-deliberately NOT changing.]
+I'll move the close button's look into one SCSS mixin in `styles/utils.scss`. Both files I need already import that file, so I don't add any new imports. The mixin holds the tint, the soft border, the text color, the 8px corners, the transition, the hover, the press and the focus ring. `.close-btn` will use the mixin and keep its own size (36px). `.play-pause-button` and `.mobile-play-button` will use it too. I'll keep the play button at 64px, because it's the main button and the one you tap on a phone. The mobile button floats over the grid, so the grid would show through a plain tint. To avoid that, the mobile button keeps the page color as its background and the tint goes on top as a gradient layer (`background-image: linear-gradient(tint, tint)`). I'll keep its round shape and shadow. If the maintainer wants square corners there, I'll change it.
+
+What I won't change: the play and pause icons, the TypeScript logic (`playPause`), the grid layout, the other buttons (undo, redo, M, S, steps, export), the modals' behavior or size, the Scala engine, the four tests that were already skipped, the `undefined.wav` file name, and `package-lock.json`.
 
 **Implementation Plan**
 
-1. [Modify file X to do Y]
-2. [Add or change Z]
-3. [Update tests]
+1. In `styles/utils.scss`, add a mixin with the close button's look (not its size or margin).
+2. In `styles/modals/modal.base.scss`, make `.close-btn` use the mixin and keep its own size, font and margin. The close button should look the same as before in all three popups that use it.
+3. In `sequencer.component.scss`, make `.play-pause-button` use the mixin and keep it at 64px. Remove the old dark hover, the 90% press and the old border and transition rules.
+4. In the same file, make `.mobile-play-button` use the mixin, with the page color as background and the tint layered on top. Keep its position, round shape and shadow.
+5. In `sequencer.component.spec.ts`, write the tests from the Test plan below. Run them on `main` first and check that the two style tests fail, then make the style change.
+6. Run `npm run test-ci` and `npm run lint`, then do the by-eye check from the Test plan. Save the before and after output in `test_evidence.md`.
 
-[Record deviations here as they happen: what changed mid-build and
-why. A recorded deviation is honest work; silent drift is not.]
+**Test plan**
+
+*Automated, in `sequencer.component.spec.ts`.* Each test sets the text color and background color variables first, so the numbers don't depend on the theme.
+
+1. Desktop play button: its border color is not the same as its text color. On `main` the border is full strength, so the two are equal and the test fails. After my change the border is a faint tint, so the test passes.
+2. Mobile play button (`.mobile-play-button`): the same check. The element is in the page even when it is hidden below 1280px, so the test can read its style.
+3. Focus ring: after the play button gets keyboard focus, it shows the blue outline, like the close button. On `main` it has no custom outline, so this test fails.
+4. Hover and press: I'll try to test these by setting the button's state in the test. If Karma can't do it reliably, I won't write a weak test. They stay in the by-eye list, and I'll say so in the PR.
+5. Guard test: the button's label switches between Play and Pause when it is clicked. This one passes before and after. It only protects the behavior I'm not touching. It is not proof of the fix.
+
+Expected results of `npm run test-ci`:
+- On `main` with tests 1, 2, 3 and 5 added: 3 failed (tests 1, 2 and 3), 83 passed, 4 skipped.
+- On my branch: 86 passed (82 old + 4 new), 4 skipped, 0 failed.
+- If the hover and press tests (4) work, each one adds to both counts. I'll fix the exact numbers once the tests exist.
+
+`npm run lint`: 0 errors, and no more warnings than `main` has. I'll record the number on `main` first.
+
+*By eye, on the branch, in light and dark mode* (this repeats steps 2, 3 and 5 of my reproduction):
+- Step 2, look at the play button: white-ish background, soft light border, 8px corners, still 64x64.
+- Step 3, hover it: it gets a slightly stronger tint, and the black icon stays easy to see. It must not fill dark. Press it: it shrinks a little.
+- Click it: the icon switches to pause, and back.
+- Step 5, open the three popups that have a × (export audio, export MIDI, browse audio samples): the × looks the same as before, 36x36, same tint and border.
+- Narrow the window to 852px wide: the round button at the bottom right shows the same soft border and tint, the grid does not show through it, and it still switches between play and pause. The desktop button is hidden.
+- Tab to the play button: it now shows the blue focus ring, like the close button.
+- Check hover, press and tab focus on both the desktop button and the mobile button (at 852px).
+
+Deviations from this plan will be written here as they happen.
+
+- 2026-10-31: The maintainer replied on #591: the shared mixin in `styles/utils.scss` is fine, 64px is fine, and he asked me to cover both buttons including hover, active and focus-visible states, with tests for the relevant behavior. I added a focus-visible test and will try hover and active tests.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: plan-check, run in Claude Code from the repo clone on `plan.md` and my draft plan comment, read against issue #591.
+- What it produced: two rejects, then an accept. The first reject was on `test-decisive`: I had no test plan section, the border test had no exact value, and I had no expected test-ci count. The second reject said my plan pointed at "my reproduction", but I had never posted the repro on #591, so the grader could not check the cause. The third run passed all six checks.
+- Difficulties: the second reject was my own gap, not a plan problem. I had kept the repro in a local file. The tool also said it had no rule for an issue with no posted repro, so it treated that as a fail.
+- What changed: I added a Test plan with exact expected results (2 failed and 83 passed on main, 85 passed on the branch) and a by-eye check that repeats my repro steps. I posted the repro on #591, then the plan comment. I also grepped the code to back up my claim that all three modals share `modal.base.scss`.
 
 ---
 
