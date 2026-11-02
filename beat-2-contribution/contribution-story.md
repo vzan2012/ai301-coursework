@@ -225,7 +225,7 @@ Deviations from this plan will be written here as they happen.
 - Tool: plan-check, run in Claude Code from the repo clone on `plan.md` and my draft plan comment, read against issue #591.
 - What it produced: two rejects, then an accept. The first reject was on `test-decisive`: I had no test plan section, the border test had no exact value, and I had no expected test-ci count. The second reject said my plan pointed at "my reproduction", but I had never posted the repro on #591, so the grader could not check the cause. The third run passed all six checks.
 - Difficulties: the second reject was my own gap, not a plan problem. I had kept the repro in a local file. The tool also said it had no rule for an issue with no posted repro, so it treated that as a fail.
-- What changed: I added a Test plan with exact expected results (2 failed and 83 passed on main, 85 passed on the branch) and a by-eye check that repeats my repro steps. I posted the repro on #591, then the plan comment. I also grepped the code to back up my claim that all three modals share `modal.base.scss`.
+- What changed: I added a Test plan with exact expected results (3 failed and 83 passed on main, 86 passed on the branch) and a by-eye check that repeats my repro steps. I posted the repro on #591, then the plan comment. I also grepped the code to back up my claim that all three modals share `modal.base.scss`.
 
 ---
 
