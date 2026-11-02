@@ -3,7 +3,7 @@
 Path: `beat-2-contribution/contribution-story.md`
 
 This file is Assignment 5, and it is graded at the path above; a copy kept anywhere else in
-the repository is not read. **Keep every section header below under its exact name** — the
+the repository is not read. **Keep every section header below under its exact name** - the
 format criteria grade exactly that. Your course repo link is the whole submission: no tool
 files and no evidence uploads are part of Assignment 5.
 
@@ -14,7 +14,7 @@ files and no evidence uploads are part of Assignment 5.
 **Pull Request:** https://github.com/Babali42/DrumBeatRepo/pull/625
 
 One repository, built across units 5 to 8, telling the whole story of your real
-contribution. Fill it as you work, not at the end — the sections below ask for evidence that
+contribution. Fill it as you work, not at the end - the sections below ask for evidence that
 is far easier to write down as it happens than to reconstruct in the last weekend.
 
 Contribution Number stays `[1]` unless you make more than one contribution this term; it
@@ -66,10 +66,15 @@ I installed the voice-guard hook and added upstream rules to my voice guide (cla
 
 I wrote a manifest with two checks, `npm run test-ci` and `npm run lint`, and put the Windows PATH in the command because my Node was too old. I left Vitest, Scala and i18n out, each with a dated reason. On my real branch the gate ran the tests and lint, then my pr-precheck rejected it: my PR said the focus test covers only the mobile button, but `plan.md` still said "will try". It was right. I added the dated notes to the plan and the second run passed. I kept the rubric as it was.
 
-**Unit 8: [one line on the tool work]**
+**Unit 8: the PR-monitor, and a playbook built on how fast this repo really answers**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+I wrote my playbook after looking at the last five PRs from outside contributors in this repo. They were merged in 2 hours, 2 hours, 3 hours, 44 hours and the same day. I wanted to fix the issue and get the PR in fast, and the maintainer answered my messages quickly, which helped me a lot. So I based my wait times on that. Less than 3 days of quiet is normal, I can send one nudge at 7 days, and I stop 14 days after the nudge.
+
+When I ran the monitor, it said my PR was already merged. I didn't really expect that, but I was confident it would be, because it passed the tests. My wait times never came into play. The monitor drafted a thank-you message instead.
+
+I changed the draft before I posted it. I took out a line asking whether the issue had closed, because I had already checked and it had. I also took out a list of things I hadn't tested, because my PR already said that. I added what the maintainer actually said about the mobile button, and a link to the follow-up issue #628.
+
+What I'd change: the monitor can't see whether my last fix was part of the merge, so I checked that myself.
 
 ---
 
@@ -180,7 +185,7 @@ What I won't change: the play and pause icons, the TypeScript logic (`playPause`
 
 **Test plan**
 
-*Automated, in `sequencer.component.spec.ts`.* Each test sets the text color and background color variables first, so the numbers don't depend on the theme.
+_Automated, in `sequencer.component.spec.ts`._ Each test sets the text color and background color variables first, so the numbers don't depend on the theme.
 
 1. Desktop play button: its border color is not the same as its text color. On `main` the border is full strength, so the two are equal and the test fails. After my change the border is a faint tint, so the test passes.
 2. Mobile play button (`.mobile-play-button`): the same check. The element is in the page even when it is hidden below 1280px, so the test can read its style.
@@ -189,13 +194,15 @@ What I won't change: the play and pause icons, the TypeScript logic (`playPause`
 5. Guard test: the button's label switches between Play and Pause when it is clicked. This one passes before and after. It only protects the behavior I'm not touching. It is not proof of the fix.
 
 Expected results of `npm run test-ci`:
+
 - On `main` with tests 1, 2, 3 and 5 added: 3 failed (tests 1, 2 and 3), 83 passed, 4 skipped.
 - On my branch: 86 passed (82 old + 4 new), 4 skipped, 0 failed.
 - If the hover and press tests (4) work, each one adds to both counts. I'll fix the exact numbers once the tests exist.
 
 `npm run lint`: 0 errors, and no more warnings than `main` has. I'll record the number on `main` first.
 
-*By eye, on the branch, in light and dark mode* (this repeats steps 2, 3 and 5 of my reproduction):
+_By eye, on the branch, in light and dark mode_ (this repeats steps 2, 3 and 5 of my reproduction):
+
 - Step 2, look at the play button: white-ish background, soft light border, 8px corners, still 64x64.
 - Step 3, hover it: it gets a slightly stronger tint, and the black icon stays easy to see. It must not fill dark. Press it: it shrinks a little.
 - Click it: the icon switches to pause, and back.
@@ -257,6 +264,10 @@ I wrote the four tests first and ran them on main: 3 failed, as planned. Then I 
 
 After I opened the PR, CodeRabbit, an automatic reviewer, left one comment. It said my focus test only works if the browser window is narrower than 1280px, because the mobile button is hidden in a wide window and a hidden button can't take focus. It was right. My test only worked because Karma's window is small, and I had not said so. I fixed it with one line: the test shows the button before focusing it. I ran the tests (86 passed, 4 skipped, 0 failed) and lint (0 errors, 3 warnings, same as before), pushed the fix as `fccc6fe`, and replied under its comment.
 
+**2026-11-02**
+
+The PR was merged at about 2am my time, about four hours after I opened it. I did not need to answer any review round. I ran the PR-monitor, and it drafted a thank-you. I took out the parts I didn't need and posted my own short version.
+
 **Toolkit**
 
 - Tool: Claude Code, with the repo memory file I wrote in Unit 6.
@@ -276,9 +287,11 @@ After I opened the PR, CodeRabbit, an automatic reviewer, left one comment. It s
 
 - 2026-10-31: the maintainer said the shared mixin and 64px are fine, and asked me to cover hover, active and focus-visible, and add tests. (That was on the plan, before the PR.)
 - 2026-11-01: PR opened. None yet on the PR.
-- 2026-11-01: CodeRabbit (a bot, not the maintainer) commented that my focus test depends on the window width. I fixed it in `fccc6fe` and replied on the comment. The maintainer has not replied on the PR yet.
+- 2026-11-01: CodeRabbit (a bot, not the maintainer) commented that my focus test depends on the window width. I fixed it in `fccc6fe` and replied on the comment. The maintainer had not replied on the PR yet.
+- 2026-11-02: the maintainer tested my fix in a codespace on my fork, said he liked the button and the mobile button, and merged the PR (merge commit `9d839f8`). He also asked the all-contributors bot to add me for code and style. All checks passed: scala, i18n, lint, tests and codecov. Issue #591 closed by itself.
+- 2026-11-02: I thanked him on the PR. He had invited me to open an issue about the Vitest failure on Windows, so I opened #628 and linked it in my thanks.
 
-**Status:** Awaiting review.
+**Status:** Merged.
 
 **Toolkit**
 
@@ -293,25 +306,23 @@ After I opened the PR, CodeRabbit, an automatic reviewer, left one comment. It s
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+Angular keeps a component's styles inside that component, so a style in a modal file can't be shared with another component, and the fix is a Sass mixin both can use. I learned that Karma can read the real style of an element, but it can't trigger hover or press, and a hidden element can't take focus, which is what CodeRabbit pointed at. I learned that this app reads the dark mode setting once, when the page loads.
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+My Node was too old, so I used a portable one in each terminal. My plan was rejected twice, first for a missing test plan, then because my repro was never posted, so I posted it. My PR was rejected once by my own gate because my plan didn't match what the PR said, and I fixed the plan. I also pasted old gate output twice before I checked the log. My dark mode check showed light mode twice until I reloaded the page.
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+I would post the repro before I write the plan. I would update the plan the moment something changes, not afterwards. I would check which window width a test depends on before I write it. And I would spend less time on a check that isn't part of the issue, like dark mode.
 
 ---
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
-
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
+- https://github.com/Babali42/DrumBeatRepo/issues/591: the thread where the maintainer approved the mixin and the 64px size, and asked for tests.
+- https://github.com/Babali42/DrumBeatRepo/pull/625: CodeRabbit's comment about the focus test, which was right.
+- The repo's `.github/actions/angular-test/action.yml` and `angular-lint/action.yml`: where I took the two commands for my manifest.
+- `frontend/src/app/ui/services/light-dark-mode/mode-toggle.service.ts`: it explained why my dark mode check showed light mode.
+- Kimia Naeiji's reply in Slack: a README-only repo is a good place to start.
+- https://github.com/Babali42/DrumBeatRepo/issues/628: the follow-up issue the maintainer invited.
