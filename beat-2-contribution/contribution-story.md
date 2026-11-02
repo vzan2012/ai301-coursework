@@ -253,6 +253,10 @@ The maintainer said the shared mixin was fine, so I kept the plan as it was. I a
 
 I wrote the four tests first and ran them on main: 3 failed, as planned. Then I wrote the `soft-button` mixin in `utils.scss`, and used it for the close button and both play buttons. I put the mixin in the base `.mobile-play-button` rule, outside the media query, so the look doesn't depend on the window width. I could not test hover or press, because Karma can't trigger them, so I did not write those tests. The focus test only covers the mobile button, because the desktop button is hidden in the test window. I checked both by eye. Wrong turn: my dark mode check showed light mode twice. The browser's appearance setting doesn't change the page, and the page only reads the setting when it loads. I fixed it with devtools emulation and a reload. I left out the File name box problem in the export popup, because it looks the same on main.
 
+**2026-11-01 (later)**
+
+After I opened the PR, CodeRabbit, an automatic reviewer, left one comment. It said my focus test only works if the browser window is narrower than 1280px, because the mobile button is hidden in a wide window and a hidden button can't take focus. It was right. My test only worked because Karma's window is small, and I had not said so. I fixed it with one line: the test shows the button before focusing it. I ran the tests (86 passed, 4 skipped, 0 failed) and lint (0 errors, 3 warnings, same as before), pushed the fix as `fccc6fe`, and replied under its comment.
+
 **Toolkit**
 
 - Tool: Claude Code, with the repo memory file I wrote in Unit 6.
@@ -272,6 +276,7 @@ I wrote the four tests first and ran them on main: 3 failed, as planned. Then I 
 
 - 2026-10-31: the maintainer said the shared mixin and 64px are fine, and asked me to cover hover, active and focus-visible, and add tests. (That was on the plan, before the PR.)
 - 2026-11-01: PR opened. None yet on the PR.
+- 2026-11-01: CodeRabbit (a bot, not the maintainer) commented that my focus test depends on the window width. I fixed it in `fccc6fe` and replied on the comment. The maintainer has not replied on the PR yet.
 
 **Status:** Awaiting review.
 
