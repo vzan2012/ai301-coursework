@@ -11,7 +11,7 @@ files and no evidence uploads are part of Assignment 5.
 **Student:** Deepak Guptha Sitharaman
 **GitHub Username:** vzan2012
 **Issue:** https://github.com/Babali42/DrumBeatRepo/issues/591
-**Pull Request:** [GitHub PR link, once opened]
+**Pull Request:** https://github.com/Babali42/DrumBeatRepo/pull/625
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -62,10 +62,9 @@ I wrote seven search queries from my fit profile, added filters to drop assigned
 
 I installed the voice-guard hook and added upstream rules to my voice guide (claims, questions, pings). The hook stopped my test command, as it should, and my claim draft passed the check before I posted it. On Windows, `ln -s` only makes a copy, so I used one-line pointer files so my skills read the same guide, and I swapped `python3` for `python` in the hook. The first post was stopped because the guard looked for my draft in the wrong folder, so I used the full path. After I claimed, my scout rejected my own issue, which led to the own-claim fix described under Why I Chose This Issue. I asked in Slack whether a README-only repo is okay, since DrumBeatRepo has no CONTRIBUTING.md. Kimia Naeiji (a TF) replied: "repo is a good place to start! But if the issue requires existing code, I recommend messaging the maintainer and ask for more info!" I forked and cloned the repo and wrote a ~36-line `CLAUDE.local.md` for it: conventions from the README, where the button code lives, the build and test commands, and "no AI policy stated". I kept it out of git with `.git/info/exclude`, because I'm a guest and can't edit upstream's `.gitignore`.
 
-**Unit 7: [one line on the tool work]**
+**Unit 7: ship-gate caught a plan I hadn't updated**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+I wrote a manifest with two checks, `npm run test-ci` and `npm run lint`, and put the Windows PATH in the command because my Node was too old. I left Vitest, Scala and i18n out, each with a dated reason. On my real branch the gate ran the tests and lint, then my pr-precheck rejected it: my PR said the focus test covers only the mobile button, but `plan.md` still said "will try". It was right. I added the dated notes to the plan and the second run passed. I kept the rubric as it was.
 
 **Unit 8: [one line on the tool work]**
 
@@ -208,6 +207,11 @@ Expected results of `npm run test-ci`:
 Deviations from this plan will be written here as they happen.
 
 - 2026-10-31: The maintainer replied on #591: the shared mixin in `styles/utils.scss` is fine, 64px is fine, and he asked me to cover both buttons including hover, active and focus-visible states, with tests for the relevant behavior. I added a focus-visible test and will try hover and active tests.
+- 2026-11-01: Plan test 3 (focus ring) only covers the mobile button. In the Karma window the desktop button is `display: none` and can't take focus, so it is not tested. Both buttons use the same mixin, and I checked the desktop focus ring by eye.
+- 2026-11-01: Plan test 4 (hover and press) was not written. Karma can't trigger `:hover` or `:active`, and I did not want a test that proves nothing. Hover is checked by eye, and press was not checked by eye. This is said in the PR.
+- 2026-11-01: The mixin is included in the base `.mobile-play-button` rule, outside the media query, so the look does not depend on the window width. The media query keeps the layout (position, size, round shape, shadow).
+- 2026-11-01: The press now shrinks both play buttons to 96%, like the close button. It was 90% on desktop and 92% on mobile.
+- 2026-11-01: Dark mode was checked by eye for the play button only, not for the popup ×. The MIDI and browse samples popups were not opened.
 
 **Toolkit**
 
@@ -220,65 +224,63 @@ Deviations from this plan will be written here as they happen.
 
 ## Testing Strategy
 
-[What observable checks prove the fix: your reproduction steps re-run
-against the built change (before and after), and the repo's own test
-suite or checks with the outcome shown. "Tests pass" with nothing
-observable named is not a strategy.]
+I check the fix three ways.
+
+**First, the repo's tests.** I added four tests to `sequencer.component.spec.ts` before changing any style. On unchanged main, 3 of them failed for the right reasons: the play button's border was the full text color (`Expected 'rgb(0, 0, 0)' not to be 'rgb(0, 0, 0)'`, on both the desktop and the mobile button), and the focus outline was the browser's default (`Expected 'auto' to be 'solid'`). After the change, `npm run test-ci` gave 86 passed, 4 skipped, 0 failed. The 4 skipped were already skipped. `npm run lint` gave 0 errors and the same 3 warnings as main.
+
+**Second, my reproduction steps again.** In Edge I repeated steps 2 to 6 from my repro on the branch: the button's look, hover, click, the export popup ×, and a window 852px wide. Hover no longer fills the button dark, and the icon stays visible.
+
+**Third, the tab key** now shows the blue focus ring on the play button.
+
+I did not check press by eye, the MIDI and browse popups, or the popup × in dark mode. A test can't trigger hover or press in Karma, so those two are by eye only.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: ship-gate, with the manifest I wrote (`npm run test-ci` and `npm run lint`), and the repo's Karma tests.
+- What it produced: it ran both checks on my branch and passed them (123s and 88s on the last run).
+- Difficulties: Vitest fails on unchanged main on Windows, so I had to leave it out with a dated reason. Node was too old on my machine, so the manifest rows set the PATH.
+- What changed: nothing in the manifest after the first run. The excluded checks are said out loud in the PR.
 
 ---
 
 ## Implementation Notes
 
-[A running log, added to as you work. Date each entry. What you
-built, decisions you made when you made them, wrong turns included.]
+**2026-10-31**
 
-**[Date]**
+The maintainer said the shared mixin was fine, so I kept the plan as it was. I added a note about his request for focus, hover and active states, and a focus test.
 
-[Entry]
+**2026-11-01**
 
-**[Date]**
-
-[Entry]
+I wrote the four tests first and ran them on main: 3 failed, as planned. Then I wrote the `soft-button` mixin in `utils.scss`, and used it for the close button and both play buttons. I put the mixin in the base `.mobile-play-button` rule, outside the media query, so the look doesn't depend on the window width. I could not test hover or press, because Karma can't trigger them, so I did not write those tests. The focus test only covers the mobile button, because the desktop button is hidden in the test window. I checked both by eye. Wrong turn: my dark mode check showed light mode twice. The browser's appearance setting doesn't change the page, and the page only reads the setting when it loads. I fixed it with devtools emulation and a reload. I left out the File name box problem in the export popup, because it looks the same on main.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude Code, with the repo memory file I wrote in Unit 6.
+- What it produced: the mixin, the tests and the exact commands, which I ran and checked myself.
+- Difficulties: it could not see my browser, so for the by-eye checks I sent screenshots and told it what I saw. My dark mode check showed light mode twice before I found the reload step.
+- What changed: I recorded each change from the plan in `plan.md` before opening the PR.
 
 ---
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**PR Link:** https://github.com/Babali42/DrumBeatRepo/pull/625
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** "Use the close button style for the play and pause buttons", `Fixes #591`. It moves the close button's look into one `soft-button` mixin and uses it for the close button, the desktop play button and the round play button. It gives a before and after for hover and focus, the test and lint results, what I did not run (Vitest, Scala, i18n) and why, what I did not check, the differences from my plan, a note about the File name box in the export popup, and a short note on how I used AI.
 
 **Maintainer Feedback:**
 
-- [Date]: [feedback received, or "none yet"; silence is a normal
-  state and costs you nothing]
-- [Date]: [how you addressed it]
+- 2026-10-31: the maintainer said the shared mixin and 64px are fine, and asked me to cover hover, active and focus-visible, and add tests. (That was on the plan, before the PR.)
+- 2026-11-01: PR opened. None yet on the PR.
 
-**Status:** [Awaiting review / Iterating / Merged / Closed. The
-status is a fact you record, never a grade: the PR is graded as
-opened.]
+**Status:** Awaiting review.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: ship-gate and my pr-precheck, then Claude Code to open the PR.
+- What it produced: a first reject, then a pass. It caught a real gap: my PR said the focus test only covers the mobile button, and my plan didn't say so.
+- Difficulties: I pasted the old gate output twice, so I thought nothing had changed. The gate log showed no new run.
+- What changed: I put the dated deviations into `plan.md`, and the second run passed. I did not change the rubric.
 
 ---
 
