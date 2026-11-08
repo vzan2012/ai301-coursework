@@ -23,96 +23,113 @@ else. Keep those labels exactly as written, one per line, and never delete a lab
 where you have nothing to put after a label, write `none` and move on. A deleted label reads
 as a deleted answer.
 
-**Before you finish**, replace every `[bracketed prompt]` with your own words, then delete
-the unused `[Tool name]` entry stub, its copy-me sentence, and the prompt sentences under
-each header. A leftover bracketed prompt reads as unfilled.
-
-**Student:** [Student name]
+**Student:** Deepak Guptha Sitharaman
 
 ## Featured Tools
 
-Three or four tools, presented in depth. Open with a few sentences
-on why you chose these.
+I featured the scout because it checked that #591 was free (0 assignees, 0 linked or open PRs, 0 comments), but it used a rule that only looked at assignees and open PRs, so I made it fail an issue if someone who isn't the maintainer said they were working on it in the last 60 days.
 
-Full credit asks the featured set to show real change: **at least two** of your featured
-entries should show a tool that visibly moved through use. An honest entry for a tool that
-barely changed — saying so, dating what did happen, and giving the reason — earns the solid
-middle tier and never fails you.
+I featured voice-guard because it checked my words against my own voice rules before I posted my claim on #591.
 
-Each tool's honest limit is not written here. It goes in the tool-limits list at the
-bottom of this page, one line per featured tool, so that the limits sit together and can be
-read as a set.
+I featured these because they caught a mistake in my own PR when I forgot to update plan.md after I changed what the focus test covers.
 
-[Why these tools, in your own words.]
+**issue-scout**
 
-Copy the entry shape below once per featured tool and fill it there.
+**What it is, and the judgment hole I wrote:** issue-scout ranks issues from a big search and checks the top ones against a rubric. The part that is mine is the rules I added later, such as the 60-day claim rule.
 
-**[Tool name]**
+**How it evolved, dated:**
 
-**What it is, and the judgment hole I wrote:** [what the tool does,
-and the part of it that is your judgment: the rubric, strategy,
-guide, manifest, or playbook you wrote.]
+- On Oct 15, the scout passed two issues that strangers had already applied to, so I changed unclaimed to also look at claim comments from the last 60 days.
+- On Oct 28, I claimed #591 and re-graded it, and the scout rejected my own issue so I changed unclaimed so it ignores my own claim on an issue I already claimed.
+- On Oct 28, the old scope-fits check would have rejected most real issues for having one open edge, so I replaced it with scope-feasible, which fails only when there is no single piece of work.
 
-**How it evolved, dated:** [the changes that made it yours, each
-with its date and the friction that drove it; your weekly Toolkit
-entries are the source.]
+**Evidence:** Before the own-claim fix, the scout rejected my own issue #591 on unclaimed alone. After it, the same issue was accepted again.
 
-**Evidence:** [show, don't claim: an output excerpt, a before/after
-pair, or a dated commit reference, inline here. Draw it from your real
-term work where you can - a catch this tool actually made, a
-before/after from your own repo or PR - which is graded separately from
-whether an artifact is present at all. A short, telling excerpt beats a
-pasted transcript.]
+**voice-guard**
+
+**What it is, and the judgment hole I wrote:** voice-guard reads my draft and checks it against my voice guide before it goes out. The part that is mine is the upstream rules I added for claims, questions and pings, each with a wrong and a right example.
+
+**How it evolved, dated:**
+
+- On Oct 28, my first post was stopped because the guard couldn't find my draft file, so I gave the full path in the --body-file argument.
+- On my Windows computer, the hook command used python3, which my computer doesn't recognize, so I swapped python3 for python in the hook.
+
+**Evidence:** My guard log shows the hook stopped my first post at 01:23 am on Oct 28 because it couldn't read the draft file, and then I posted the claim: https://github.com/Babali42/DrumBeatRepo/issues/591#issuecomment-6461382811
+
+```
+2026-10-28 01:12 [manual] pass | target: claim-draft.md
+2026-10-28 01:23 [hook] stop: could not read the body file: [Errno 2] No such file or directory: (path left out)
+2026-10-28 01:23 [hook] pass | target: gh issue comment 591 --repo
+```
+
+**pr-precheck + ship-gate**
+
+**What it is, and the judgment hole I wrote:** ship-gate checks my branch and my PR draft together before the PR goes out. The part that is mine is my manifest, the 2 checks I chose (npm run test-ci and npm run lint).
+
+**How it evolved, dated:**
+
+- On Oct 31, my manifest ran npm run test-ci and npm run lint, with the PATH set to a newer portable Node because my system Node was too old. It left out Vitest, Scala and i18n because Vitest already fails on main on Windows, and Scala and i18n need sbt and jq, which I don't have.
+- On Nov 1, my pr-precheck rejected my PR because my plan and my PR said different things about the focus test, so I wrote the deviations into plan.md, and the gate passed at 21:50 hrs.
+
+**Evidence:** My gate log shows a BLOCK, because diff-within-plan failed: my plan didn't say the focus test covers only the mobile button at 20:44 on Nov 1, and then a PASS, after I wrote the deviations into plan.md at 21:50.
+
+```
+2026-11-01 20:44 [manual]
+- verdict: BLOCK (block)
+  - diff-within-plan [fail]: Plan test 3 (focus ring on the play button) is delivered for the mobile button only, and plan.md's Deviations section doesn't record it ...
+
+2026-11-01 21:50 [manual]
+- verdict: PASS
+  - diff-within-plan [pass]: All 4 changed files are in the plan (utils.scss mixin, modal.base.scss, sequencer scss, spec); ...
+```
 
 ## Inventory
 
-One line each for the rest of the toolkit: what it is and where it
-stands (one bullet per tool; a compact sentence or two is fine).
-
-- [Tool name: one line.]
+- repro-check: it checks that my repro is real and clear, and it accepted my #591 repro, with small notes.
+- plan-check: it checks that my plan can be tested, and it rejected my #591 plan twice before it accepted it.
+- pr-monitor: it reads my PR's live state and drafts my next move to a file, and I edited the draft before I posted it.
 
 ## The Arc
 
-The story of the toolkit in order: friction, change, result, dated.
-Your weekly Toolkit entries are the source; read your own record and
-tell it oldest first.
-
-Write one block per beat, in the shape below, oldest first. Keep all four labels on every
-beat, each on its own line. The `Result:` line is what the beat was for: it says what
-happened *after* the change, which is not the same sentence as the change itself. If a beat
-never reached a result, write `Result: none` — an honest beat that did not land still counts
-fully as a beat.
-
-Full credit asks for **at least two** beats whose `Result:` line names something that
-actually happened afterwards. A beat about something that did not work counts fully as a
-beat, and when the work happened never moves this score.
-
 **Beat 1**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
+Date: Oct 15, 2026
+Friction: When I checked the scout's top results on GitHub, I saw that two of its issues already had strangers saying they applied, because it only looked at assignees and open PRs.
+Change: So I made unclaimed fail on a claim comment from someone who isn't the maintainer, and I picked 60 days because an old claim should not block an issue forever.
+Result: Afterwards I re-ran the three canaries and all three matched the gold answers, but the fix is only tested on the canaries, not on the scan.
 
 **Beat 2**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
+Date: Oct 28, 2026
+Friction: When I re-graded #591 after I claimed it, the scout failed the issue I was already working on, because it saw my own claim comment as someone else's claim.
+Change: So I changed unclaimed to ignore my own claim on an issue I already claimed.
+Result: Afterwards, the same issue #591 was accepted again, and the scout's difficulty for it was "moderate".
 
-Copy the beat shape above for as many beats as your term had.
+**Beat 3**
+Date: Oct 28, 2026
+Friction: When I tried to post my claim on #591, the guard blocked my post, because the --body-file path I gave it was not a full path.
+Change: So I gave the full path in the --body-file argument.
+Result: Afterwards, the guard passed at 01:23 and my claim was posted on #591.
+
+**Beat 4**
+Date: Nov 1, 2026
+Friction: When I ran the gate on my PR draft, it blocked my PR because the focus ring test covers only the mobile button, and plan.md didn't say so.
+Change: So I wrote the changes into the plan.md file.
+Result: Afterwards, the maintainer merged it on Nov 2.
+
+**Beat 5**
+Date: Nov 2, 2026
+Friction: When I ran pr-monitor on PR #625, it read the PR as already merged, so its thresholds never fired.
+Change: So I rewrote the draft before I posted it.
+Result: Afterwards, I posted the thank-you, and I opened follow-up issue #628.
 
 ## Limitations and What's Next
 
-What the toolkit as a whole still does not do, and what you would
-build or change next. Write this section last; it will be better
-after the rest.
-
-[The honest limits, and what comes next, in your own sentences.]
+pr-monitor's thresholds never fired, so I don't know if they work on a stalled PR. Vitest still fails on Windows, so my manifest leaves it out. Next, I will work on follow-up issue #628 and see how the toolkit handles it.
 
 **Tool limits.** One line per featured tool, in the same order as the entries above, naming
 where that tool still stops or what it still gets wrong. A small honest limit is full credit;
 "none really" is not a limit. If a tool genuinely has none you can name, write `none` after
 its label rather than deleting the line.
 
-issue-scout: [where this tool still stops, in plain words, or the word none]
-[tool name]: [where this tool still stops, in plain words, or the word none]
+issue-scout: I still can only see claims written in comments, not people who say they're working on it somewhere else.
+voice-guard: It still needs the python3 to python swap by hand on Windows, and the setup template still says python3.
+pr-precheck + ship-gate: It can catch a plan and PR mismatch, but it can't tell me if my fix is good.
